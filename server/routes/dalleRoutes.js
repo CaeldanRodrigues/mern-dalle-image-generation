@@ -5,18 +5,22 @@ import OpenAI from "openai";
 dotenv.config();
 
 const router = express.Router();
-const openai = new OpenAI();
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
 
-router.get("/", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { prompt } = req.body;
 
     const aiResponse = await openai.images.generate({
       model: "dall-e-2", 
-      prompt: prompt, 
+      prompt: prompt,
+      size: '1024x1024', 
       response_format: 'b64_json' 
     });
-    const image = aiResponse.data[0].base64;
+    // console.log(aiResponse);
+    const image = aiResponse.data[0].b64_json;
 
     res.status(200).json({ photo: image });
 
